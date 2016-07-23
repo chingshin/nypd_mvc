@@ -1,0 +1,38 @@
+---
+title: "NYPD Motor Vehicle Collisions"
+author: "ChingShin"
+date: "July 23, 2016"
+output: html_document
+---
+
+#Set up environment and load data into R
+```{r cache=TRUE}
+library(ggplot2)
+setwd("~/Documents/R/NYPD_MVC/")
+mvc.raw <- read.csv(file = "NYPD_Motor_Vehicle_Collisions.csv", header = T)
+```
+
+#Get info of the data
+1. Use str() function 
+```{r}
+str(mvc.raw)
+```
+2. Use head() function
+```{r}
+head(mvc.raw)
+```
+
+*The NYPD_Motor_Vehicle_Collisions.csv has lots of empty entries and NAs in cells.
+*Some columns are charactor but were assigned to factor.
+
+#Clean up data
+1. Reassign attributes columns
+```{r}
+mvc.raw$DATE <- as.Date(mvc.raw_NA$DATE, format = "%m/%d/%Y")
+
+```
+
+2. Use complete.case() function to remove cases having any NA in its cells
+```{r}
+mvc.del_NA <- complete.cases(mvc.raw)
+```

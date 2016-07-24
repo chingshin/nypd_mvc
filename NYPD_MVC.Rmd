@@ -5,34 +5,51 @@ date: "July 23, 2016"
 output: html_document
 ---
 
-#Set up environment and load data into R
+### Set up environment and load data into R
 ```{r cache=TRUE}
-library(ggplot2)
 setwd("~/Documents/R/NYPD_MVC/")
 mvc.raw <- read.csv(file = "NYPD_Motor_Vehicle_Collisions.csv", header = T)
 ```
 
-#Get info of the data
+### Get info of the data
 1. Use str() function 
 ```{r}
 str(mvc.raw)
 ```
-2. Use head() function
-```{r}
-head(mvc.raw)
-```
 
-*The NYPD_Motor_Vehicle_Collisions.csv has lots of empty entries and NAs in cells.
-*Some columns are charactor but were assigned to factor.
+* The NYPD_Motor_Vehicle_Collisions.csv has lots of empty entries and NAs in cells.
+* Some columns are charactor but were assigned to factor.
+* There are `r nrow(mvc.raw)` observations in the data.
 
-#Clean up data
+### Clean up data
 1. Reassign attributes columns
 ```{r}
-mvc.raw$DATE <- as.Date(mvc.raw_NA$DATE, format = "%m/%d/%Y")
-
+mvc.raw$DATE <- as.Date(mvc.raw$DATE, format = "%m/%d/%Y")
 ```
 
-2. Use complete.case() function to remove cases having any NA in its cells
+2. Subset data by lantitude and longitude
 ```{r}
-mvc.del_NA <- complete.cases(mvc.raw)
+mvc.xy <- mvc.raw[!is.na(mvc.raw$LATITUDE) & !is.na(mvc.raw$LONGITUDE), ]
+```
+* There are `r nrow(mvc.xy)` observations left after removing observations which do not have the information of latitude and longitude.
+
+3. Use complete.case() function to remove cases having any NA in its cells
+```{r}
+mvc.del_NA <- mvc.raw[complete.cases(mvc.raw), ]
+```
+* There are `r nrow(mvc.del_NA)` observations left after removing observations which contain any NA.
+
+### Plots
+1. Collisions incidents grouped by boroughs
+```{r}
+library(ggplot2)
+library(scales)
+qplot(BOROUGH, data = mvc.del_NA, geom = "bar")
+```
+
+2. Collisions incidents by dates
+```{r}
+g2 <- qplot(DATE, data = mvc.del_NA, geom = "histogram", binwidth = 10, facets = . ~ BOROUGH)
+g2 + scale_x_date(breaks = date_breaks('4 months'), labels = date_format("%Y-%m")) + 
+  theme(axis.text.x = element_text(angle=90))
 ```

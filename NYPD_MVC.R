@@ -7,14 +7,17 @@ mvc.raw <- read.csv(file = "NYPD_Motor_Vehicle_Collisions.csv", header = T)
 str(mvc.raw)
 head(mvc.raw)
 
-#Clean up data
-mvc.raw_NA$DATE <- as.Date.character(df.raw_NA$DATE, format = "%m/%d/%Y")
-mvc.raw_NA$TIME <- as.character(mvc.raw_NA$TIME)
+#Assign DATE column as a date class
+mvc.raw$DATE <- as.Date(mvc.raw$DATE, format = "%m/%d/%Y")
 
-
+#subset data having lantitude and longitude
+mvc.xy <- mvc.raw[!is.na(mvc.raw$LATITUDE) & !is.na(mvc.raw$LONGITUDE), ]
+#subset data with complete.cases() 
 mvc.del_NA <- mvc.raw[complete.cases(mvc.raw), ]
 
 
-
-mvc.tmp <- mvc.del_NA[1:200, ]
-ggplot(mvc.del_NA, mapping = aes(DATE)) + geom_bar()
+qplot(BOROUGH, data = mvc.del_NA, geom = "bar")
+g2 <- qplot(DATE, data = mvc.del_NA, geom = "histogram", binwidth = 10, facets = . ~ BOROUGH)
+g2 + scale_x_date(breaks = date_breaks('4 months'), labels = date_format("%Y-%m")) + 
+  theme(axis.text.x = element_text(angle=90))
+ggplot(mvc.del_NA, mapping = aes(BOROUGH)) + geom_bar()

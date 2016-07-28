@@ -22,9 +22,12 @@ g2 + scale_x_date(breaks = date_breaks('4 months'), labels = date_format("%Y-%m"
   theme(axis.text.x = element_text(angle=90))
 ggplot(mvc.del_NA, mapping = aes(BOROUGH)) + geom_bar()
 
-
 mvc.killed <- mvc.del_NA[mvc.del_NA$NUMBER.OF.PERSONS.KILLED > 0, ]
 qplot(NUMBER.OF.PERSONS.KILLED, data = mvc.killed, geom = "bar", facets = . ~ BOROUGH)
 
 #use leaflet package to create a map with collision incident markers
-leaflet(mvc.xy) %>% addTiles() %>% addMarkers(clusterOptions = markerClusterOptions())
+##load borough shape file (https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)
+borough <- readOGR("Borough_Boundaries", layer = "geo_export_45eb8df1-3366-4833-a27e-dfb36076578d")
+
+leaflet(mvc.xy) %>% addTiles() %>% addMarkers(clusterOptions = markerClusterOptions()) %>%
+  addPolygons(data = borough, fill = FALSE, stroke = TRUE, color = "darkred")

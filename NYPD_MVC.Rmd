@@ -12,7 +12,7 @@ mvc.raw <- read.csv(file = "NYPD_Motor_Vehicle_Collisions.csv", header = T)
 ```
 
 ### Get info of the data
-1. Use str() function 
+1. Use str() function to check data structure 
 ```{r}
 str(mvc.raw)
 ```
@@ -52,4 +52,10 @@ qplot(BOROUGH, data = mvc.del_NA, geom = "bar")
 g2 <- qplot(DATE, data = mvc.del_NA, geom = "histogram", binwidth = 10, facets = . ~ BOROUGH)
 g2 + scale_x_date(breaks = date_breaks('4 months'), labels = date_format("%Y-%m")) + 
   theme(axis.text.x = element_text(angle=90))
+```
+
+3. Collisions incidents on the map (use leaflet package)
+```{r message=FALSE}
+library(leaflet)
+leaflet(mvc.xy) %>% addTiles() %>% addMarkers(clusterOptions = markerClusterOptions())
 ```

@@ -1,5 +1,8 @@
 #Set up environment and load data into R
 library(ggplot2)
+library(magrittr)
+library(rgdal)
+library(leaflet)
 setwd("~/Documents/R/NYPD_MVC/")
 mvc.raw <- read.csv(file = "NYPD_Motor_Vehicle_Collisions.csv", header = T)
 
@@ -21,9 +24,6 @@ g2 <- qplot(DATE, data = mvc.del_NA, geom = "histogram", binwidth = 10, facets =
 g2 + scale_x_date(breaks = date_breaks('4 months'), labels = date_format("%Y-%m")) + 
   theme(axis.text.x = element_text(angle=90))
 ggplot(mvc.del_NA, mapping = aes(BOROUGH)) + geom_bar()
-
-mvc.killed <- mvc.del_NA[mvc.del_NA$NUMBER.OF.PERSONS.KILLED > 0, ]
-qplot(NUMBER.OF.PERSONS.KILLED, data = mvc.killed, geom = "bar", facets = . ~ BOROUGH)
 
 #use leaflet package to create a map with collision incident markers
 ##load borough shape file (https://data.cityofnewyork.us/City-Government/Borough-Boundaries/tqmj-j8zm)
